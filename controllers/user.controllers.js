@@ -2,7 +2,7 @@ import { User } from "../models/users.model.js";
 
 export const userSignUpCOntroller = async (req, resp) => {
   try {
-    const { firstName, lastName, email, password } = req.body;
+    const { firstName, lastName, email, password ,gender } = req.body;
 
     const user = await User.findOne({ email });
 
@@ -18,6 +18,7 @@ export const userSignUpCOntroller = async (req, resp) => {
       lastName,
       email,
       password,
+      gender
     });
 
     await userDB.save();
@@ -35,6 +36,7 @@ export const userSignUpCOntroller = async (req, resp) => {
       message: "Register Success",
     });
   } catch (error) {
+    console.log(error)
     return resp.status(400).json({
       success: false,
       message: error.message,
@@ -137,6 +139,7 @@ export const updateUser = async (req, resp) => {
       data,
       {
         returnDocument: "after",
+        runValidators: true
       }
     );
 
@@ -149,6 +152,7 @@ export const updateUser = async (req, resp) => {
     return resp.status(400).json({
       success: false,
       message: "Error while updating user",
+      err: error.message
     });
   }
 };
