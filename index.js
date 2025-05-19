@@ -10,7 +10,6 @@ import mongoConnect from "./DB/mongo.db.js";
 
 dotenv.config();
 
-
    mongoConnect().then(()=>{
         console.log("MongoDB Connected!!".bgGreen.black);
         app.listen(process.env.PORT || PORT,(req,res)=>{
