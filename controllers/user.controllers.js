@@ -1,10 +1,10 @@
 import { User } from "../models/users.model.js";
+import { validateSignUpData } from "../utils/validation.utils.js";
 
 export const userSignUpCOntroller = async (req, resp) => {
   try {
-    const { firstName, lastName, email, password, gender } = req.body;
-
-    const user = await User.findOne({ email });
+   const sanitizeData = await validateSignUpData(req) ;
+    const user = await User.findOne({ email: sanitizeData.email });
 
     if (user) {
       return resp.status(400).json({
@@ -14,11 +14,7 @@ export const userSignUpCOntroller = async (req, resp) => {
     }
 
     const userDB = await User.create({
-      firstName,
-      lastName,
-      email,
-      password,
-      gender,
+        ...sanitizeData
     });
 
     await userDB.save();
