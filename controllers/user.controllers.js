@@ -2,7 +2,7 @@ import { User } from "../models/users.model.js";
 
 export const userSignUpCOntroller = async (req, resp) => {
   try {
-    const { firstName, lastName, email, password ,gender } = req.body;
+    const { firstName, lastName, email, password, gender } = req.body;
 
     const user = await User.findOne({ email });
 
@@ -18,7 +18,7 @@ export const userSignUpCOntroller = async (req, resp) => {
       lastName,
       email,
       password,
-      gender
+      gender,
     });
 
     await userDB.save();
@@ -36,7 +36,7 @@ export const userSignUpCOntroller = async (req, resp) => {
       message: "Register Success",
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return resp.status(400).json({
       success: false,
       message: error.message,
@@ -128,10 +128,24 @@ export const deleteUser = async (req, resp) => {
 };
 
 export const updateUser = async (req, resp) => {
-  const userId = req.body.userId;
+  const userId = req.params.userId;
   const data = req.body;
 
+
   try {
+    const ALLOWED_UPDATES = ["pic", "age", "about", "gender","hobbies"];
+
+    const isUpdateAllowed = Object.keys(data).every(k => ALLOWED_UPDATES.includes(k)) ;
+
+  
+    if(!isUpdateAllowed){
+      throw new Error(`Updating is not allowed `)
+    }
+
+    if(data.hobbies.length > 10){
+        throw new Error(`Hobbies more then 10 is not allowed `)
+      }
+
     const updatedUser = await User.findByIdAndUpdate(
       {
         _id: userId,
@@ -139,7 +153,7 @@ export const updateUser = async (req, resp) => {
       data,
       {
         returnDocument: "after",
-        runValidators: true
+        runValidators: true,
       }
     );
 
@@ -149,10 +163,11 @@ export const updateUser = async (req, resp) => {
       data: updatedUser,
     });
   } catch (error) {
+    console.log(error)
     return resp.status(400).json({
       success: false,
       message: "Error while updating user",
-      err: error.message
+      err: error.message,
     });
   }
 };
