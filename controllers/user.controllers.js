@@ -113,7 +113,7 @@ export const deleteUser = async (req, resp) => {
     }
 
     return resp.status(400).json({
-      success: false,
+      success: true,
       message: "User deleted successfully",
     });
   } catch (error) {
@@ -121,6 +121,34 @@ export const deleteUser = async (req, resp) => {
     return resp.status(400).json({
       success: false,
       message: "Error while deleting user",
+    });
+  }
+};
+
+export const updateUser = async (req, resp) => {
+  const userId = req.body.userId;
+  const data = req.body;
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      {
+        _id: userId,
+      },
+      data,
+      {
+        returnDocument: "after",
+      }
+    );
+
+    return resp.status(400).json({
+      success: true,
+      message: "User updated",
+      data: updatedUser,
+    });
+  } catch (error) {
+    return resp.status(400).json({
+      success: false,
+      message: "Error while updating user",
     });
   }
 };
