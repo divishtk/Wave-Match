@@ -1,9 +1,10 @@
 import { User } from "../models/users.model.js";
 import { validateSignUpData } from "../utils/validation.utils.js";
+import bcrypt from "bcrypt";
 
 export const userSignUpCOntroller = async (req, resp) => {
   try {
-   const sanitizeData = await validateSignUpData(req) ;
+    const sanitizeData = await validateSignUpData(req);
     const user = await User.findOne({ email: sanitizeData.email });
 
     if (user) {
@@ -14,7 +15,7 @@ export const userSignUpCOntroller = async (req, resp) => {
     }
 
     const userDB = await User.create({
-        ...sanitizeData
+      ...sanitizeData,
     });
 
     await userDB.save();
@@ -127,20 +128,20 @@ export const updateUser = async (req, resp) => {
   const userId = req.params.userId;
   const data = req.body;
 
-
   try {
-    const ALLOWED_UPDATES = ["pic", "age", "about", "gender","hobbies"];
+    const ALLOWED_UPDATES = ["pic", "age", "about", "gender", "hobbies"];
 
-    const isUpdateAllowed = Object.keys(data).every(k => ALLOWED_UPDATES.includes(k)) ;
+    const isUpdateAllowed = Object.keys(data).every((k) =>
+      ALLOWED_UPDATES.includes(k)
+    );
 
-  
-    if(!isUpdateAllowed){
-      throw new Error(`Updating is not allowed `)
+    if (!isUpdateAllowed) {
+      throw new Error(`Updating is not allowed `);
     }
 
-    if(data.hobbies.length > 10){
-        throw new Error(`Hobbies more then 10 is not allowed `)
-      }
+    if (data.hobbies.length > 10) {
+      throw new Error(`Hobbies more then 10 is not allowed `);
+    }
 
     const updatedUser = await User.findByIdAndUpdate(
       {
@@ -159,11 +160,43 @@ export const updateUser = async (req, resp) => {
       data: updatedUser,
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return resp.status(400).json({
       success: false,
       message: "Error while updating user",
       err: error.message,
     });
+  }
+};
+
+export const login = async (req, resp) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return resp.status(400).json({
+        success: false,
+        message: "Account doesnot exists, please create account",
+      });
+    }
+
+    const checkPassword = await user.isMatchPassword(password);
+    if (!checkPassword) {
+      return resp.status(401).json({
+        success: false,
+        message: "Please provide the correct password",
+      });
+    }
+
+    return resp.status(200).json({
+        success: false,
+        message: "Logged In",
+      });
+  } catch (error) {
+    return resp.status(401).json({
+        success: false,
+        message: "Something went wrong while performing login",
+      });
   }
 };
