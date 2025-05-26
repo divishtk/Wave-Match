@@ -1,6 +1,7 @@
 import { User } from "../models/users.model.js";
 import { validateSignUpData } from "../utils/validation.utils.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 export const userSignUpCOntroller = async (req, resp) => {
   try {
@@ -189,14 +190,48 @@ export const login = async (req, resp) => {
       });
     }
 
+    const token = await user.getJWT() ;
+
+    resp.cookie("token", token, {
+      expires: new Date(Date.now() + 2 + 3600000),
+    });
+
     return resp.status(200).json({
-        success: false,
-        message: "Logged In",
-      });
+      success: false,
+      message: "Logged In",
+    });
   } catch (error) {
+    console.log(error)
     return resp.status(401).json({
-        success: false,
-        message: "Something went wrong while performing login",
-      });
+      success: false,
+      message: "Something went wrong while performing login",
+    });
   }
+};
+
+export const getProfile = async (req, resp) => {
+  //   const cookies = req.cookies;
+  //   console.log(cookies);
+  //   resp.send("reading cookies");
+
+  console.log(req.user);
+  try {
+    const user = await User.findById(req.user);
+
+    return resp.status(200).json({
+      success: true,
+      message: "Get Profile success",
+      user,
+    });
+  } catch (error) {
+    console.log(error);
+    return resp.status(401).json({
+      success: false,
+      message: "Something went wrong while getting profile",
+    });
+  }
+};
+
+export const sendConnectionRequest = async (req, resp) => {
+  resp.send("Connection request sent");
 };

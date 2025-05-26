@@ -1,5 +1,6 @@
 import { Router } from "express";
-import { deleteUser, getFeedOfUsers, getUserByEmail, login, updateUser, userSignUpCOntroller } from "../controllers/user.controllers.js";
+import { deleteUser, getFeedOfUsers, getProfile, getUserByEmail, login, sendConnectionRequest, updateUser, userSignUpCOntroller } from "../controllers/user.controllers.js";
+import authenticationMiddleware from "../middlewares/auth.middlewares.js";
 
 const userRouter = Router();
 
@@ -10,6 +11,9 @@ userRouter.route("/get-user-feed").get(getFeedOfUsers)
 userRouter.route("/delete-user").delete(deleteUser)
 userRouter.route("/update-user/:userId").patch(updateUser)
 userRouter.route("/login").get(login)
+userRouter.route("/get-profile").get(authenticationMiddleware,getProfile)
+userRouter.route("/send-request").get(authenticationMiddleware,sendConnectionRequest)
+
 
 
 
