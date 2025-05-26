@@ -1,5 +1,5 @@
-import { param } from "express-validator";
 import { ConnectionRequest } from "../models/connectionRequest.model.js";
+import {User} from "../models/users.model.js"
 
 export const sendConnectionRequest = async (req, resp) => {
   try {
@@ -14,6 +14,15 @@ export const sendConnectionRequest = async (req, resp) => {
         success: false,
         message: "Invalid status type: " + status,
       });
+    }
+
+    const toUserIdExists = await User.findById(toUserId) ;
+    console.log(toUserIdExists)
+    if(!toUserIdExists){
+      return resp.status(404).json({
+        success: false,
+        message: "User not found",
+      }); 
     }
 
     const existingConnectionRequest = await ConnectionRequest.findOne({
@@ -35,9 +44,7 @@ export const sendConnectionRequest = async (req, resp) => {
         message: "Connection request already exists",
       }); 
     }
-    
-
-
+  
     const connectionRequest = new ConnectionRequest({
       fromUserId,
       toUserId,
@@ -52,9 +59,10 @@ export const sendConnectionRequest = async (req, resp) => {
       data,
     });
   } catch (error) {
+    console.log(error)
     return resp.status(401).json({
       success: false,
-      message: "Something went wrong while sending request",
+      message: error.messagebn,
     });
   }
 };
