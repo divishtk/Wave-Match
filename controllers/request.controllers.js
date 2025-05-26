@@ -16,6 +16,25 @@ export const sendConnectionRequest = async (req, resp) => {
       });
     }
 
+    const existingConnectionRequest = await ConnectionRequest.findOne({
+        $or:[
+          {
+            fromUserId,
+            toUserId
+          },
+          {
+            fromUserId: toUserId ,
+            toUserId: fromUserId
+          }
+        ],
+    });
+
+    if(existingConnectionRequest){
+      return resp.status(400).json({
+        success: false,
+        message: "Connection request already exists",
+      }); 
+    }
     
 
 
