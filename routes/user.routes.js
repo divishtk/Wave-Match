@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { deleteUser, getFeedOfUsers, getProfile, getUserByEmail, login, sendConnectionRequest, updateUser, userSignUpCOntroller } from "../controllers/user.controllers.js";
+import { deleteUser, getFeedOfUsers, getProfile, getUserByEmail, login, logout, sendConnectionRequest, updateUser, userSignUpCOntroller } from "../controllers/user.controllers.js";
 import authenticationMiddleware from "../middlewares/auth.middlewares.js";
 
 const userRouter = Router();
@@ -13,6 +13,8 @@ userRouter.route("/update-user/:userId").patch(updateUser)
 userRouter.route("/login").get(login)
 userRouter.route("/get-profile").get(authenticationMiddleware,getProfile)
 userRouter.route("/send-request").get(authenticationMiddleware,sendConnectionRequest)
+userRouter.route("/logout").post(authenticationMiddleware,logout)
+
 
 
 

@@ -214,7 +214,6 @@ export const getProfile = async (req, resp) => {
   //   console.log(cookies);
   //   resp.send("reading cookies");
 
-  console.log(req.user);
   try {
     const user = await User.findById(req.user);
 
@@ -235,3 +234,16 @@ export const getProfile = async (req, resp) => {
 export const sendConnectionRequest = async (req, resp) => {
   resp.send("Connection request sent");
 };
+export const logout = async (req, resp) => {
+    resp.cookie("token",null,{
+        expires: new Date(Date.now())
+    });
+
+    return resp.status(200).json({
+        success: true,
+        message: "Logged Out",
+      });
+    
+  };
+
+
