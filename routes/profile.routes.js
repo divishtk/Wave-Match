@@ -1,10 +1,12 @@
 import { Router } from "express";
 import authenticationMiddleware from "../middlewares/auth.middlewares.js";
-import { getProfile } from "../controllers/profile.controllers.js";
+import { getProfile, profileEdit } from "../controllers/profile.controllers.js";
 
 const profileRouter = Router();
 
-profileRouter.route("/get-profile").get(authenticationMiddleware,getProfile)
+profileRouter.route("/profile/view").get(authenticationMiddleware,getProfile);
+profileRouter.route("/profile/edit").patch(authenticationMiddleware,profileEdit)
+
 
 
 

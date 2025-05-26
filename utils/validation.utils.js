@@ -18,3 +18,12 @@ export const validateSignUpData = async(req , res , next) =>{
     return req.body ; 
 
 }
+
+
+export const validateEditProfileData = (req , res , next) =>{
+    const allowedEditFields = ["firstName","lastName","pic","hobbies","gender","about","age"] ;
+    const isEditAllowed = Object.keys(req.body).every(k=>allowedEditFields.includes(k)) ;
+
+    return isEditAllowed
+
+}
