@@ -5,7 +5,8 @@ import { sendConnectionRequest } from "../controllers/request.controllers.js";
 const requestRouter = Router();
 
 
-requestRouter.route("/send-request").get(authenticationMiddleware,sendConnectionRequest)
+requestRouter.route("/request-send/:status/:toUserId").get(authenticationMiddleware,sendConnectionRequest);
+
 
 
 export default requestRouter;
