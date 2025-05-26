@@ -3,6 +3,8 @@ import cors from "cors";
 import bodyParser from "body-parser"; // For parsing JSON bodies
 import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.routes.js";
+import profileRouter from "./routes/profile.routes.js";
+import requestRouter from "./routes/request.routes.js";
 
 
 const app = express();
@@ -18,6 +20,9 @@ app.use(
   app.use(cookieParser());
   app.use(bodyParser.json());
 
- app.use('/api/v1/auth',userRouter)
+ app.use('/',userRouter);
+ app.use('/',profileRouter);
+ app.use('/',requestRouter);
+
 
 export {app}

@@ -175,14 +175,15 @@ export const login = async (req, resp) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
+
     if (!user) {
       return resp.status(400).json({
         success: false,
         message: "Account doesnot exists, please create account",
       });
     }
-
     const checkPassword = await user.isMatchPassword(password);
+
     if (!checkPassword) {
       return resp.status(401).json({
         success: false,
@@ -190,14 +191,13 @@ export const login = async (req, resp) => {
       });
     }
 
-    const token = await user.getJWT() ;
-
+    const token = await user.getJWT();
     resp.cookie("token", token, {
       expires: new Date(Date.now() + 2 + 3600000),
     });
 
     return resp.status(200).json({
-      success: false,
+      success: true,
       message: "Logged In",
     });
   } catch (error) {
@@ -209,31 +209,6 @@ export const login = async (req, resp) => {
   }
 };
 
-export const getProfile = async (req, resp) => {
-  //   const cookies = req.cookies;
-  //   console.log(cookies);
-  //   resp.send("reading cookies");
-
-  try {
-    const user = await User.findById(req.user);
-
-    return resp.status(200).json({
-      success: true,
-      message: "Get Profile success",
-      user,
-    });
-  } catch (error) {
-    console.log(error);
-    return resp.status(401).json({
-      success: false,
-      message: "Something went wrong while getting profile",
-    });
-  }
-};
-
-export const sendConnectionRequest = async (req, resp) => {
-  resp.send("Connection request sent");
-};
 export const logout = async (req, resp) => {
     resp.cookie("token",null,{
         expires: new Date(Date.now())
