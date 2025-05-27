@@ -5,8 +5,8 @@ import { requestReview, sendConnectionRequest } from "../controllers/request.con
 const requestRouter = Router();
 
 
-requestRouter.route("/request/send/:status/:toUserId").get(authenticationMiddleware,sendConnectionRequest);
-requestRouter.route("/request/review/:status/:requestId").get(authenticationMiddleware,requestReview);
+requestRouter.route("/request/send/:status/:toUserId").post(authenticationMiddleware,sendConnectionRequest);
+requestRouter.route("/request/review/:status/:requestId").post(authenticationMiddleware,requestReview);
 
 
 export default requestRouter;

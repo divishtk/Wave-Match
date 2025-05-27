@@ -15,6 +15,12 @@ userRouter.route("/logout").post(authenticationMiddleware,logout)
 
 
 
+//endpoint for pending connection request
+userRouter.route("/user/request").get(authenticationMiddleware,logout)
+
+
+
+
 
 
 
