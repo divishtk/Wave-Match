@@ -36,28 +36,38 @@ export const yourConnections = async (req, resp) => {
     // }).populate("fromUserId",["firstName"]);
 
     const yourConnections = await ConnectionRequest.find({
-        $or :[
-            {
-                toUserId:loggedInUser._id,
-                status:"accepted" 
-            },
-            {
-                fromUserId:loggedInUser._id,
-                status:"accepted"
-            } 
-        ]
-    }).populate("fromUserId","firstName lastName age about hobbies gender pic")
-  
-     const data = yourConnections.map((data) => data.fromUserId) ;
+      $or: [
+        {
+          toUserId: loggedInUser._id,
+          status: "accepted",
+        },
+        {
+          fromUserId: loggedInUser._id,
+          status: "accepted",
+        },
+      ],
+    })
+      .populate("fromUserId", "firstName lastName age about hobbies gender pic")
+      .populate("toUserId", "firstName lastName age about hobbies gender pic");
+
+
+      console.log(yourConnections)
+
+    const data = yourConnections.map((row) => {
+      if (row.fromUserId._id.toString() === loggedInUser._id.toString()) {
+        return row.toUserId;
+      }
+      return row.fromUserId;
+    });
 
     return resp.status(201).json({
       success: true,
       message: "Your connections",
-      data
+      data,
     });
   } catch (error) {
     console.log(error);
-    return resp.status(201).json({        
+    return resp.status(201).json({
       success: true,
       message: error.message,
     });
