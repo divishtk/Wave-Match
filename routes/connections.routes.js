@@ -5,7 +5,7 @@ import { getConnectionRequests } from "../controllers/connection.controllers.js"
 const connectionRouter = Router();
 
 //endpoint for pending connection request
-userRouter.route("/user/request").get(authenticationMiddleware,getConnectionRequests)
+connectionRouter.route("/user/requests/received").get(authenticationMiddleware,getConnectionRequests)
 
 
 

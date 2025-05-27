@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.routes.js";
 import profileRouter from "./routes/profile.routes.js";
 import requestRouter from "./routes/request.routes.js";
+import connectionRouter from "./routes/connections.routes.js";
 
 
 const app = express();
@@ -23,6 +24,7 @@ app.use(
  app.use('/',userRouter);
  app.use('/',profileRouter);
  app.use('/',requestRouter);
+ app.use('/',connectionRouter)
 
 
 export {app}
