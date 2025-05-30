@@ -49,14 +49,13 @@ export const yourConnections = async (req, resp) => {
     })
       .populate("fromUserId", "firstName lastName age about hobbies gender pic")
       .populate("toUserId", "firstName lastName age about hobbies gender pic");
-
-
-      console.log(yourConnections)
+      
 
     const data = yourConnections.map((row) => {
       if (row.fromUserId._id.toString() === loggedInUser._id.toString()) {
         return row.toUserId;
       }
+
       return row.fromUserId;
     });
 

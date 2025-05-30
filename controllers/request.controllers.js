@@ -27,10 +27,12 @@ export const sendConnectionRequest = async (req, resp) => {
 
     const existingConnectionRequest = await ConnectionRequest.findOne({
       $or: [
+        // Sending a duplicate request from the same direction
         {
           fromUserId,
           toUserId,
         },
+        //Sending a duplicate request in the opposite direction
         {
           fromUserId: toUserId,
           toUserId: fromUserId,
