@@ -1,7 +1,6 @@
+import { ConnectionRequest } from "../models/connectionRequest.model.js";
 import { User } from "../models/users.model.js";
 import { validateSignUpData } from "../utils/validation.utils.js";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 
 export const userSignUpCOntroller = async (req, resp) => {
   try {
@@ -72,7 +71,7 @@ export const getUserByEmail = async (req, resp) => {
 };
 
 export const getFeedOfUsers = async (req, resp) => {
-  try {
+  /*try {
     const allUsers = await User.find({});
 
     if (allUsers.length === 0) {
@@ -87,6 +86,56 @@ export const getFeedOfUsers = async (req, resp) => {
       success: true,
       message: "Fetch Success",
     });
+  } catch (error) {
+    console.log(error);
+    return resp.status(400).json({
+      success: false,
+      message: "Something went wrong while fetching all users",
+    });
+  }*/
+
+  try {
+    const loggedInUser = req.user;
+
+    //find all connection request that either i have (send + received)
+
+    const connectionRequest = await ConnectionRequest.find({
+      $or: [
+        {
+          fromUserId: loggedInUser._id,
+        },
+        {
+          toUserId: loggedInUser._id,
+        },
+      ],
+    }).select("fromUserId , toUserId")
+   // .populate("fromUserId", "firstName")
+    //.populate("toUserId" , "firstName");
+
+
+    const hiddenUsersFromFeed = new Set() ;
+    connectionRequest.forEach(req =>{
+      hiddenUsersFromFeed.add(req.fromUserId.toString()) ;
+      hiddenUsersFromFeed.add(req.toUserId.toString()) ;
+    })
+
+
+    const users = await User.find({
+      $and :[
+          {
+            _id : {
+              $nin: Array.from(hiddenUsersFromFeed) 
+            }
+          },
+          {
+            _id : {
+              $ne: loggedInUser._id
+            }
+          }
+      ]  
+      }).select("firstName lastName age about hobbies gender pic")
+
+    resp.send(users);
   } catch (error) {
     console.log(error);
     return resp.status(400).json({
@@ -201,7 +250,7 @@ export const login = async (req, resp) => {
       message: "Logged In",
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return resp.status(401).json({
       success: false,
       message: "Something went wrong while performing login",
@@ -210,15 +259,12 @@ export const login = async (req, resp) => {
 };
 
 export const logout = async (req, resp) => {
-    resp.cookie("token",null,{
-        expires: new Date(Date.now())
-    });
+  resp.cookie("token", null, {
+    expires: new Date(Date.now()),
+  });
 
-    return resp.status(200).json({
-        success: true,
-        message: "Logged Out",
-      });
-    
-  };
-
-
+  return resp.status(200).json({
+    success: true,
+    message: "Logged Out",
+  });
+};
