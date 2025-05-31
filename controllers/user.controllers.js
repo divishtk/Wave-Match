@@ -96,9 +96,13 @@ export const getFeedOfUsers = async (req, resp) => {
 
   try {
     const loggedInUser = req.user;
+    const page = parseInt(req.query.page) || 1;
+    let limit = parseInt(req.query.limit) || 10;
+    limit = limit > 50 ? 50 : limit ;
+    const skip = (page - 1) * limit;
+
 
     //find all connection request that either i have (send + received)
-
     const connectionRequest = await ConnectionRequest.find({
       $or: [
         {
@@ -108,32 +112,33 @@ export const getFeedOfUsers = async (req, resp) => {
           toUserId: loggedInUser._id,
         },
       ],
-    }).select("fromUserId , toUserId")
-   // .populate("fromUserId", "firstName")
+    }).select("fromUserId , toUserId");
+    // .populate("fromUserId", "firstName")
     //.populate("toUserId" , "firstName");
 
-
-    const hiddenUsersFromFeed = new Set() ;
-    connectionRequest.forEach(req =>{
-      hiddenUsersFromFeed.add(req.fromUserId.toString()) ;
-      hiddenUsersFromFeed.add(req.toUserId.toString()) ;
-    })
-
+    const hiddenUsersFromFeed = new Set();
+    connectionRequest.forEach((req) => {
+      hiddenUsersFromFeed.add(req.fromUserId.toString());
+      hiddenUsersFromFeed.add(req.toUserId.toString());
+    });
 
     const users = await User.find({
-      $and :[
-          {
-            _id : {
-              $nin: Array.from(hiddenUsersFromFeed) 
-            }
+      $and: [
+        {
+          _id: {
+            $nin: Array.from(hiddenUsersFromFeed),
           },
-          {
-            _id : {
-              $ne: loggedInUser._id
-            }
-          }
-      ]  
-      }).select("firstName lastName age about hobbies gender pic")
+        },
+        {
+          _id: {
+            $ne: loggedInUser._id,
+          },
+        },
+      ],
+    })
+      .select("firstName lastName age about hobbies gender pic")
+      .skip(skip)
+      .limit(limit);
 
     resp.send(users);
   } catch (error) {
