@@ -10,7 +10,7 @@ userRouter.route("/get-user-from-email").get(getUserByEmail)
 userRouter.route("/get-user-feed").get(authenticationMiddleware,getFeedOfUsers)
 userRouter.route("/delete-user").delete(deleteUser)
 userRouter.route("/update-user/:userId").patch(updateUser)
-userRouter.route("/login").get(login)
+userRouter.route("/login").post(login)
 userRouter.route("/logout").post(authenticationMiddleware,logout)
 
 

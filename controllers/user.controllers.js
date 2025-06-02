@@ -226,6 +226,7 @@ export const updateUser = async (req, resp) => {
 
 export const login = async (req, resp) => {
   try {
+    console.log(req.body)
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
@@ -253,6 +254,7 @@ export const login = async (req, resp) => {
     return resp.status(200).json({
       success: true,
       message: "Logged In",
+      user
     });
   } catch (error) {
     console.log(error);

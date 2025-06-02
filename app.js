@@ -7,19 +7,16 @@ import profileRouter from "./routes/profile.routes.js";
 import requestRouter from "./routes/request.routes.js";
 import connectionRouter from "./routes/connections.routes.js";
 
-
 const app = express();
 app.use(cors());
+//app.use(express.json());
 app.use(express.static("./assets"));
 
 app.set('view engine','ejs');
 
-app.use(express.urlencoded({ extended: true })); // Parses form data
-app.use(
-    express.json()
-  );
-  app.use(cookieParser());
-  app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true })); // Parses form data
+app.use(bodyParser.json());
+app.use(cookieParser());
 
  app.use('/',userRouter);
  app.use('/',profileRouter);
